@@ -23,7 +23,7 @@ public class Kata4 {
     public static List<Map> execute() {
         List<MovieList> movieLists = DataUtil.getMovieLists();
 
-        Predicate<BoxArt> matchRequiredDimensions = (boxArt) -> boxArt.getHeight() == 200 && boxArt.getWidth() == 150;
+        Predicate<BoxArt> matchRequiredDimensions = boxArt -> boxArt.getHeight() == 200 && boxArt.getWidth() == 150;
 
         Function<List<BoxArt>, List<BoxArt>> filterBoxArts = boxArts -> boxArts.stream()
                 .filter(matchRequiredDimensions)
