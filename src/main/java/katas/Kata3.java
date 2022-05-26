@@ -23,14 +23,7 @@ public class Kata3 {
 
         Stream<Integer> videoIds = listOfMovies.flatMap(videos -> videos.stream().map(video -> video.getId()));
 
-        System.out.println(videoIds.collect(Collectors.toList()));
-
         return videoIds.collect(Collectors.toList());
 
-
-    }
-
-    public static void main(String[] args) {
-        Kata3.execute();
     }
 }
