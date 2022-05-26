@@ -24,7 +24,7 @@ public class Kata8 {
         List<Movie> movies = DataUtil.getMovies();
         List<Bookmark> bookMarks = DataUtil.getBookMarks();
 
-        Stream<ImmutableMap<String, Integer>> zip = StreamUtils.zip(
+        Stream<ImmutableMap<String, Integer>> zippedCollections = StreamUtils.zip(
                 movies.stream(),
                 bookMarks.stream(),
                 (a, b) -> ImmutableMap.of(
@@ -32,6 +32,6 @@ public class Kata8 {
                         "bookmarkId", b.getId()
                 ));
 
-        return zip.collect(Collectors.toList());
+        return zippedCollections.collect(Collectors.toList());
     }
 }

@@ -38,7 +38,7 @@ public class Kata7 {
 
         Stream<List<Movie>> movieListStream = movieLists.stream().map(MovieList::getVideos);
 
-        Stream<ImmutableMap<String, Object>> immutableMapStream = movieListStream.flatMap(movies -> movies.stream()
+        Stream<ImmutableMap<String, Object>> immutableMapStream = movieListStream.flatMap(movies ->movies.stream()
                 .map(movie -> ImmutableMap.of(
                         "id", movie.getId(),
                         "title", movie.getTitle(),
