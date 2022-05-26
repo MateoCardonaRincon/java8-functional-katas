@@ -6,6 +6,10 @@ import util.DataUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
     Goal: Create a datastructure from the given data:
@@ -63,8 +67,40 @@ public class Kata11 {
         List<Map> boxArts = DataUtil.getBoxArts();
         List<Map> bookmarkList = DataUtil.getBookmarkList();
 
-        return ImmutableList.of(ImmutableMap.of("name", "someName", "videos", ImmutableList.of(
-                ImmutableMap.of("id", 5, "title", "The Chamber", "time", 123, "boxart", "someUrl")
-        )));
+        Supplier<NullPointerException> noBoxArtFound = () -> {
+            throw new NullPointerException("No box-art found");
+        };
+
+        Function<String, String> filterBoxartByVideoIdAndSize = videoId -> boxArts.stream()
+                .filter(boxArt -> boxArt.get("videoId").toString().equals(videoId))
+                .reduce((priorBoxart, currentBoxArt) ->
+                        Integer.parseInt(priorBoxart.get("width").toString()) *  Integer.parseInt(priorBoxart.get("height").toString())
+                                > Integer.parseInt(currentBoxArt.get("width").toString()) *  Integer.parseInt(currentBoxArt.get("height").toString()) ?
+                                priorBoxart : currentBoxArt)
+                .orElseThrow(noBoxArtFound)
+                .get("url")
+                .toString();
+
+        Function<String, String> filterBookMarkByVideoId = videoId -> bookmarkList.stream()
+                .filter(bookMark -> bookMark.get("videoId").toString().equals(videoId))
+                .map(bookMark -> bookMark.get("time").toString())
+                .collect(Collectors.toList()).get(0);
+
+        Function<String, List<Map>> filterVideosByListId = listId -> videos.stream()
+                .filter(video -> video.get("listId").toString().equals(listId))
+                .map(video -> ImmutableMap.of(
+                        "id", video.get("id"),
+                        "title", video.get("title"),
+                        "time", filterBookMarkByVideoId.apply(video.get("id").toString()),
+                        "boxart", filterBoxartByVideoIdAndSize.apply(video.get("id").toString())
+                ))
+                .collect(Collectors.toList());
+
+        Stream<ImmutableMap<String, Object>> immutableMapStream = lists.stream()
+                .map(list -> ImmutableMap.of(
+                        "name", list.get("name"),
+                        "videos", filterVideosByListId.apply(list.get("id").toString())));
+
+        return immutableMapStream.collect(Collectors.toList());
     }
 }
