@@ -24,12 +24,16 @@ public class Kata6 {
             throw new NullPointerException("No box-art found");
         };
 
-        Stream<BoxArt> boxArtStream = movies.stream().flatMap(movie -> movie.getBoxarts().stream());
+        Stream<List<BoxArt>> boxArtListStream = movies.stream().map(movie -> movie.getBoxarts());
 
-        return boxArtStream.reduce((priorBoxart, currentBoxArt) ->
+        Stream<BoxArt> boxArtStream = boxArtListStream.flatMap(boxArts -> boxArts.stream());
+
+        String url = boxArtStream.reduce((priorBoxart, currentBoxArt) ->
                         priorBoxart.getWidth() * priorBoxart.getHeight() > currentBoxArt.getWidth() * currentBoxArt.getHeight() ?
                                 priorBoxart : currentBoxArt)
                 .orElseThrow(noBoxArtFound)
                 .getUrl();
+
+        return url;
     }
 }
